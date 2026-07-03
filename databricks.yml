@@ -1,0 +1,19 @@
+bundle:
+  name: my-streamlit-bundle
+
+# Define the infrastructure resources for the bundle
+resources:
+  apps:
+    hello_world_app: # The resource key used by the CLI
+      name: "local-streamlit-app" # The actual name displayed in the Databricks UI
+      source_code_path: ./src
+      description: "A local Hello World Streamlit deployment"
+
+# Define the deployment targets
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      # Replace with your actual workspace URL
+      host: https://dbc-e3b1c9bb-b254.cloud.databricks.com
