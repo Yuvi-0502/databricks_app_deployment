@@ -1,12 +1,10 @@
-name: Deploy Databricks Bundle on Dev PR Merge
+name: Push-Dev
 
 # Trigger this workflow ONLY when a Pull Request targeting the 'dev' branch is closed
 on:
-  pull_request:
+  push:
     branches:
-      - dev
-    types:
-      - closed
+      - 'dev'
 
 jobs:
   deploy-dev:
