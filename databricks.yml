@@ -1,13 +1,15 @@
 bundle:
   name: my-streamlit-bundle
 
+# Base infrastructure resources configuration
 resources:
   apps:
     hello_world_app: 
-      name: "local-streamlit-app" 
+      name: "local-streamlit-app" # Default name used by your local machine
       source_code_path: ./src
-      description: "A local Hello World Streamlit deployment"
+      description: "A Hello World Streamlit deployment"
 
+# Define the deployment targets
 targets:
   # 1. Used for your local VS Code terminal (Human user)
   local:
@@ -18,7 +20,14 @@ targets:
 
   # 2. Used by GitHub Actions (Service Principal)
   dev:
-    # This MUST be 'production' for a Service Principal to deploy it
     mode: production 
     workspace:
       host: https://dbc-e3b1c9bb-b254.cloud.databricks.com
+      # Resolves the warning by isolating the Service Principal's bundle files
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    
+    # OVERRIDE: Changes the name specifically for this automated target to avoid the 409 conflict
+    resources:
+      apps:
+        hello_world_app:
+          name: "dev-streamlit-app"
