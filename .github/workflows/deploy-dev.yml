@@ -1,0 +1,41 @@
+name: Deploy Databricks Bundle on Dev PR Merge
+
+# Trigger this workflow ONLY when a Pull Request targeting the 'dev' branch is closed
+on:
+  pull_request:
+    branches:
+      - dev
+    types:
+      - closed
+
+jobs:
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    
+    # CRITICAL: This condition ensures the workflow ONLY runs if the PR was actually MERGED.
+    # If the PR was closed/abandoned without merging, the workflow will safely skip.
+    if: github.event.pull_request.merged == true
+
+    # Inject your OAuth credentials securely into the environment
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install the Databricks CLI
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      # Step 3: Validate the bundle syntax against the 'dev' target
+      - name: Validate Bundle
+        run: databricks bundle validate -t dev
+
+      # Step 4: Deploy the bundle to the 'dev' workspace
+      - name: Deploy Bundle
+        run: databricks bundle deploy -t dev
