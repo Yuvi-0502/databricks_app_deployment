@@ -1,10 +1,12 @@
-name: Push-Dev
+name: Deploy Databricks Bundle on Dev PR Merge
 
 # Trigger this workflow ONLY when a Pull Request targeting the 'dev' branch is closed
 on:
-  push:
+  pull_request:
     branches:
-      - 'dev'
+      - dev
+    types:
+      - closed
 
 jobs:
   deploy-dev:
@@ -13,7 +15,7 @@ jobs:
     
     # CRITICAL: This condition ensures the workflow ONLY runs if the PR was actually MERGED.
     # If the PR was closed/abandoned without merging, the workflow will safely skip.
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
 
     # Inject your OAuth credentials securely into the environment
     env:
